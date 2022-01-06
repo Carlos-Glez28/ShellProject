@@ -1,0 +1,42 @@
+Carlos Gonzalez
+Project 2 Developing a Linux shell
+CIS 3207 Section 04
+
+Testing:
+I tested this project using a batchfile that has various different builtin commands
+along with commands that will be accessed with the fork and execvp command. For user
+input various different forms were written one of the ways to test for file redirection
+is to use echo and to print text to a new file with the symbol '>.' The next step in Testing
+was once again using echo function and the '>>' to redirect the text to a file, but
+it appends to the end of the file rather than delete everything else which
+'>' does. To test out the fork and execvp command I called the command sort to
+sort a file with random numbers. After noticing that it works, I used piping to do
+sort num.txt | uniq to keep all unique numbers in the file after they had been sorted.
+At first I thought the sorting function didn't work because 56 came before 6 but after
+reading the manual that is exactly what needed to happen.
+
+Discussion:
+Most of the builtin in functions were easy to write and I think the main component
+of this project wasn't necessarily those builtin functions, but rather file redirection,
+piping, and the creation of processes. Probably the most difficult section for me
+was the one that had to with & symbol, just because I wasn't really sure what they were
+asking for. So at that point I had to search up what was happening and why things were happening.
+
+Issues:
+One of the main issues that I kept on getting through my running process are segmentation
+faults. After using the debugger I was able to to figure out where the main issues are.
+Although I debugged my program I was not able to completely debug my program, but I do know
+where it comes from. It comes from my main function in the shell.c file. The bug is at line 36
+and enters the function into a while loop. The exact line is while(fgets(input, sizeof(input), fp)),
+logically to me it makes sense and does work however, that is where the bug is coming from.
+I understand segmentation faults come from areas in which you try and reach data that does not exist or
+areas in which memory is not allocated for, so I do not get the issue. This bug causes the user to input an
+argument when running the shell for the first time. For example, ./shell Batchfile.txt works and so does
+./shell cd, but ./shell causes a segmentation fault which should not happen.
+
+Results:
+In the end the results of this lab were to gain an understanding of how a linux shell works.
+Not to simply understand how the builtin functions work but rather to figure out how to create
+child processes and using the fork() system call. With everything that was done here I could say
+that I have a lot more deeper understanding and appreciation for a linux shell rather than simply
+thinking of it as an app that made me feel dumb.

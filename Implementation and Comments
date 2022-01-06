@@ -1,0 +1,768 @@
+Carlos Gonzalez
+Pseudocode
+CIS 3207 Section 04
+This was to be my original implementation and this was before I had a better understanding
+of what I was doing. My newer pseudocode will be at the bottom
+I will have two .c files One will be the main.c file and the other will be a utilities.c file
+that will function as a library later on.
+Utilities.c
+include “shell.h”
+include stdio.h
+include stdlib.h
+include unistd.h
+include string.h
+include dirent.h
+include errno.h
+include sys/stat.,h
+include sys/types.h
+include sys/wait.h
+
+Global extern char double pointer for enviro
+Clear Function
+Shell_clr(char ** args){
+System(clear)
+Return 1
+}
+
+Simple shell quit
+Int shell_quit(char **args){
+Return 0;
+}
+
+Pause function
+Int shell_pause(char **args){
+Char buffer[500] = “”
+Prints Shell is Paused. Press enter to resume
+While(Strcmp(buffer, \n) != 0){
+	Fgets(Buffer, sizeof(Buffer), stdin
+}
+Prints shell has resumed
+Return 1
+}
+
+Echo Function
+Int shell(char **args){
+I = 1
+While(Args[i] != null
+	Prints the string from args[i]
+	Increment i
+}
+Prints newline
+Return 1
+}
+
+Directory Function
+Int shell_dir(char **args){
+DIR *directory
+Struct dirent *reader
+Directory = opendir(./)
+If directory is not null
+	While reader is equal to readdir(Directory)
+		Print directory to screen
+		Close directory variable
+		}
+	}else{
+		Print error directory couldn’t be opened
+	}
+Return 0
+}
+
+Change directory function
+Int shell_cd(char **args){
+If(Args[i] == NULL){
+	Char cwd[1024] to hold directory name
+	Get directory name
+	Prints Current Directory is cwd
+Else{
+	If(there is a change directory error){
+		Prints cd error
+	}
+}
+}
+
+Environment function
+Int shell_environ(char **args){
+I = 1
+Char *environmentvariable = *environ
+For I; environmentvariable; increment i{
+	Prints environmentvariable
+	Environmentvariable = * (environ + i)
+}
+Return 0
+}
+
+Help function
+Int shell_help(char **args){
+Call clear function
+Int j = 0
+Struct winsize to hold dimensions of the window
+Hold dimensions of wndow
+Char MFile[1024[
+File pointer
+Open file for readme in read mode
+While(fgets(MFile, 1024, filepoint) is not equal to NULL){
+	Prints string in MFile
+J++
+If j is equal to w.ws_row – 1{
+	Char buffer[10]
+	While fgets mFile, 1024, filepointer is not equal to null{
+		Get string from stdin and store into buffer
+		If(Strcmp((buffer), \n){
+			Char *token = strtok(MFile)
+			Prints string from MFile
+		}
+		If(Strcmp(buffer, q\n) is equal to 0){
+			Close file pointer
+			Return 1
+		}
+	}
+	Close file pointer
+	Return 1
+	}
+}
+
+Main.c File
+Include Utilities.h
+Define ASize = 1024
+
+Read from stdin
+Char *readline(){
+Char input[Asize]
+Char *read
+Reads input and saves into input using fgets
+Read = input
+Return read
+}
+
+Printd Current directory
+Void printHName{
+Char name[ASize]
+Char wd[1024]
+If(getcwd(wd) is not equal to null){
+	Gethostname and save into wd
+	Prints hostname wd to stdou
+}else{
+	Printss error message
+}
+}
+
+Does most of the work
+Int eval(char * line)
+Char *argv[ASize]
+Background = 0;
+Calls Parse function with arguments line and argv
+If(argv[ALength -1], “&” == 0){
+Background = 1
+Argv[Alength-1] = NULL;
+}
+X = Calls Redirect function with arguments argv and background
+If(x = 2){
+	Return1
+}
+If(x = 0){
+	If(argv[0] == NULL{
+		Retrun 0
+	}
+	If(Calls isUtilities function with argument argv == 1){
+		Calls RunUtilities function with argument argv
+	}
+	Else{
+		Calls forkprogram with argv and Background
+		Return 1
+	}
+	Return 1
+	}
+}
+
+Parseline function
+Void ParseLine( char *line, char* argv[ASize]){
+	Char *savestring
+	Char t[] = {“\n}
+	Savestring = strtok(line, t);
+	Counter = 0
+Argv[counter] = token
+	Counter++
+	While(Savestring is not equal to null){
+		Savestring = strtok(NULL, t)
+		Argv[counter] = savestring
+		Counter++
+	}
+	Alength++
+}
+
+RunUtilities function
+Int RunUtilities(char *argv[ASize]){
+	Int counter
+	For counter = 0; I < Csize; i++
+		If(Strcmp(argv[0], utilities[i]) == 0)
+			Return (*utilities[i])(Argv);
+
+
+	Return 0
+
+Redirect function
+Void redirect(char*argv[ASize], int flag, int i){
+	J = 1
+	In, out
+	Pid_t pid
+	Savedin = dup(0)
+	Savedout = dup(1)
+	Pid = fork()
+	If(pid < 0){
+		Prints error
+	}
+	Else if(pid == 0){
+		If(flag is equal to 1){
+			Output = open(argv[j + 1], O_wronly O_creat, S_irwxu, S_irwig, S_irwxo)
+			Dup2(output, 1)
+			Close(output)
+			Argv[j] Is set to null
+			Argv[j + 1] is set to null
+			J++
+		}
+		If(flag is equal to 2){
+			Input = open(argv[j + 1], O_wronly O_creat, S_irwxu, S_irwig, S_irwxo)
+			Dup2(input, 0)
+			Close(input)
+Argv[j] is set to  null
+			Argv[j + 1] is set to null
+			J++
+		}
+		If(flag is equal to 3){
+			Output = open(argv[j + 1], O_wronly O_creat, S_irwxu, S_irwig, S_irwxo)
+			Dup2(output, 1)
+			Close(output)
+Argv[j] is set to  null
+			Argv[j + 1] is set to null
+			J++
+		}
+		Execvp(argv[0], argv)
+	}
+	Else if(pid is greater than 0){
+		Waitpid(pid, NULL, wcontinued)
+	}
+	Dup2(savedin, 0)
+	Close(Savedin)
+	Dup2(savedout, 1)
+	Close(savedout)
+}
+
+ForkProgram
+Void ForkProgram(char *argv[Asize], int Background){
+	Pid_t pid;
+	Pid = fork()
+	If pid is less than = 0{
+		Prints error
+	}
+	If pid is equal to 0{
+		If execvp returns an int less than 0{
+			Prints error
+			Exit
+		}
+	}
+	Else if( pid is greater than 0 and background is equal to 0){
+		Status
+		If waitpid is less than 0{
+			Prints error
+		}
+	}
+}
+
+Redirect function
+Int redirect(char *argv[ASize], int Background){
+	Redirected = 0
+	Char *leftside[ASize]
+	Char *rightside[ASize]
+	I = 0
+	While(Argv[i} is not equal to null){
+		If(ispipe returns 1){
+			pipeE(leftside, rightside, background)
+			return 2
+		}
+		If(strcmp(Argv[i] , “>”) is equal to 0){
+			Redirect(Argv, 1, i)
+			Redirected = 1
+		}
+If(Strcmp(Argv[i] , “<” is equal to 0){
+			Redirect(argv, 1, i)
+			Redirected = 1
+		}
+
+If(Strcmp(Argv[i] , “>>” is equal to 0){
+			Redirect(argv, 2, i)
+			Redirected = 1
+		}
+		I++
+	}
+	Return redirected
+}
+
+Ispipe function
+Int ispipe(char *argv[ASize[, char* leftside[assize], char *rightsize[ASize]){
+	Pipenum = 0
+	I = 0
+	J, k
+	While(Argv[i] is not equal to null){
+		If(Strcmp(Argv[i], |) is not equal to 0){
+For j = 0 j less than I j++{
+				Leftside[j] = malloc for specified element
+				Char *strarg = argv[j]
+				Leftside[j] = strarg
+			}
+			M = 0
+			For(k+ 1 k less than actual length k++W){
+				Rightside[m] = malloc for specified element
+				*strarg = argv[k]
+				Rightside[m] = strarg
+				M++
+			}
+			Pipenum = 1
+		}
+		I++
+	}
+	Return pipenum
+}
+
+PipeE function
+Void PipeE(char *leftside[assize], char *rightside){
+	Int fd[2]
+	Pid_t pid
+	Pid_t pid2
+	Int Sin = dup(0)
+	SOut = dup(1)
+	Pipe(fd)
+	Pid = fork()
+	If(pid is less than 0){
+		Prints error
+		Exit
+	}
+	If(pid equals 0){
+		Dup2(fd[1], stdout_fileno)
+		Close(fd[0])
+		If(isUtilities(leftside) is equal to 1){
+			RunUtilities(leftside)
+		}
+		E;se{
+			If(Execvp(leftside[0], leftside) is less than 0){
+				Print error
+				}
+		}
+	}
+	Else{
+		Pid2 forks
+		If(pid2 is less than 0){
+			Prints error
+			Exit
+		}
+		Else if(pid2 is equal to 0){
+			Dup2(fd[0], stdin_fileend)
+Close fd[1]
+			If(isUtilities(rightside) equal to 1){
+				runUtilities(rightside)
+			}
+			Else{
+				If(execvp(rightside[0], rightside){
+					Prints error
+				}
+			}
+		}
+	Else if(pid 2 is greater than 0 and background == 0){
+		Close(fd[0]
+		Close(fd[1])
+		Waitpid(pid, null, 0)
+		Waitpid(pid2, null, 0)
+	}
+}
+}
+
+Actual implementation: This is what I used after studying more about these topics.
+shell.c
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include "Builtins.h" //includes builtin commands
+#define commandSize 7
+char* readLine();//reads input
+void printName();//prints shell name and cd
+int eval(char *);//reads input and checks what to do with it
+void parser(char*, char* argv[1024]);//parses into tokens
+void forkP(char* argv[1024], int );//forks program
+int rBuiltin(char* argv[1024]);//run builtin if it is a builtin command
+void redirect(char * argv[1024], int, int);//redirection process
+int isredirect(char * argv[1024], int);//checks whether the input contains a redirect symbol
+int ispipe(char *argv[1024], char *left[1024], char *right[1024]);//checks if input has a pipe
+void pipeEval(char *left[1024], char *right[1024], int flag);//handles piping
+
+global variable of array length
+
+/*Prints cwd, handles batchfile or input and calls functions*/
+main function
+  if compares argv[1] and batchfile are equal
+    char[] Input
+    char *line
+    file point fp opens filepointer to batchfile.txt
+    while(file is not empty)
+      line = Input
+      int throwaway = eval(line)
+    close files
+  Else//no batchfile
+      char *line
+      system(clear)
+      infinite loop//starts user input shell
+        printName()
+        line = readline()
+        if(line is the word quit)
+          exit program
+        int throwaway = eval(line)
+
+
+
+
+char *readline()
+  char input[1024]
+  char *line
+  read input from stdin
+  line = input//saves input to line
+  return line
+
+void printname()
+  char host[1024]//hostnames
+  char *line//working directory
+  if(get working directory is not null)//check for errors
+    gethostname
+    print(cwd and hostname )
+  Else
+    print errors
+
+
+int eval(char *line)
+  char *argv[1024];//input
+  int flag = 0;//flag to check for &
+  parser(line, argv);//splits into tokens
+  if(checks if line and & are equal)
+    flag = 1;//sets flag to true
+    // deletes & from string
+  throwaway = isredirect(argv, line)
+  if(throwaway == 2)
+    return 1 becuase the pipe function does it owns thing
+  if(throwaway == 0)//no redirection
+    if not an input
+      then ignore
+    if it is a builtin
+      then run the builtin
+    Else
+      fork function which execs the program
+      return 1
+    return 1
+  return 0//Function will not reach this point but if it does then something is really wrong
+
+int rBuiltin(char *argv[1024])
+  int counter
+  for loop that iterates through builtin commandS
+    if there is a match
+      run the Builtins
+
+void redirect(char *argv[1024], int flag, int ctr)
+  int p = ctr; //cycles throught token starting at ctr
+  pid_t pid; //forks
+  int savedin = dup(0);//saves read
+  int savedout = dup(1);//saves write
+  pid = fork();//forks process
+  if(pid < 0){// checks for error
+    prints error
+  }
+  if(pid is the child process)
+      if(the token is >)
+        int output = open(argv[p + 1], O_WRONLY|O_CREAT,S_IRWXU|S_IRWXG|S_IRWXO);
+        dup2(output, 1); //dups write side
+        close(output);//STDOUT
+        argv[p] = NULL;// > is now NULL
+        argv[p + 1] = NULL;// file is now null
+        p++;
+      if(the token is <)
+        int input = open(argv[p + 1], O_CREAT | O_RDONLY, 0666);// opens file in r mode
+        dup2(input, 0);//dups read
+        close(input);//stdin
+        argv[p] = NULL;//< null
+        argv[p + 1] = NULL;// file NULL
+        p++;
+        if( redirect token >>)
+          int output = open(argv[p + 1], O_WRONLY | O_APPEND | O_CREAT, 0666);
+          dup2(output, 1);// dups write side
+          close(output);//closes STDOUT
+          argv[p] = NULL;// >> null
+          argv[p + 1] = NULL;// file NULL
+          p++;
+      executes command if not a builtin
+  if(it is a parent process)
+    make the parent wait until child is finished
+  dup2(savedin, 0);//restores read
+  close(savedin);
+  dup2(savedout, 1);// restores stdout
+  close(savedout);
+
+  void fork program(char *argv[1024], int flag)
+    pid
+    forks process
+    handle error by checking if pid < 0
+      print errors
+    if pid == 0 //checks if a child
+      compares argv[1024] and argv for error handling
+        exit process
+    if pid > 0 and flag = 0
+      int state
+      if(waitpid(pid, &state, 0) < 0)//error in waitng
+        printf("ERROR\n");
+
+  int isredirect(char *argv[1024], int flag)
+    int redirected = flag
+    char *left[1024];//left side of token
+    char *right[1024];//right side
+    int i = 0;
+    while(argv[i] != NULL){//checks if there are still strings
+      if(ispipe(argv, left, right) == 1){//checks for a pipe
+        pipeEval(left, right, flag);//calls pipe
+        return 2;//returns pipe flag
+      }if(strcmp(argv[i], ">") == 0){//checks for >
+        redirect(argv, 1, i);//redirects
+        redirected = 1;//sets redirect flag to true
+      }if(strcmp(argv[i], "<") == 0){//checks for <
+        redirect(argv, 2, i);//redirects
+        redirected = 1;
+      }if(strcmp(argv[i], ">>") == 0){//checks for >>
+        redirect(argv, 3, i);//redirects
+        redirected = 1;
+      }
+      i++;
+    }
+    return redirected;//flag
+
+  int ispipe(char *argv[1024], char *left[1024], char *right[1024])
+  int PNum = 0;
+  int i = 0;
+  int j;
+  int k;
+  while(argv[i] != NULL){//check if there is a string
+    if(check if there is a pipe){
+      for(j = 0; j < i; j++){//left side
+        left[j] = malloc(sizeof(char) * sizeof(argv[i]));//memory allocation
+        char *str = argv[j];//token is stored into string
+        left[j] = str;//stores ptr into array
+      }
+      int m = 0;
+      for(k = i + 1; k < length; k++){//checks for end of array
+        right[m] = malloc(sizeof(char) * sizeof(argv[k]));//memory allocation
+        char *str = argv[k];//token into string
+        right[m] = str;//stores ptr into array
+        m++;
+      }
+      PNum = 1;//flag is true
+    }
+    i++;
+  }
+  return PNum;
+}
+
+void parser(char *line, char* argv[1024]){
+  char *t = NULL;//saves string
+  char p[] = {" \n"};//separater
+  int ctr = 0;
+  t = strtok(line, p);//saves
+  argv[ctr] = t;//stores first word
+  ctr++;
+  while(t != NULL){
+    t = strtok(NULL, p);//takes strings
+    argv[ctr] = t;//saves strings
+    ctr++;
+  }
+  length = ctr - 1;//actual length of array is calculated global variable
+}
+
+
+void pipeEval(char *left[1024], char *right[1024], int flag){
+  int fd[2];//r and w to end of pipe
+  pid_t pid;//child process
+  pid_t pid2;// second child
+  int SIn = dup(0);//saves read
+  int SOut = dup(1);//saves write
+  (void)SIn;//void to not have an error
+  (void)SOut;//void to not have an error
+  pipe(fd);//pipes r and w
+  pid = fork();//forks process
+  handle errors by checking that pid is not less than 0
+    then print error
+  if pid is 0 that means it is the first child
+    dup2(fd[1], STDOUT_FILENO);//dups stdout
+    close(fd[0]);
+    if(isBuiltin(left) == 1)//checks for builtin in the leftside array
+      rBuiltin(left);//runs builtin
+    else{//not builtin
+      if(execvp(left[0], left) < 0)//checks for error
+        printf("Error exec\n");
+  if pid is the parent
+    pid2 = fork() //forks the process
+    if(pid is less than zero)
+      print error about forking
+      exit program
+    if(pid2 is 0)
+    dup2(fd[0], STDIN_FILENO);//dups read
+    close(fd[1]);//close write
+    if(isBuiltin(right) == 1)//checks for builtin in the rightside array
+      rBuiltin(right);//runs builtin
+    Else
+      check for error when it comes to execvp
+        if error exists print error
+
+end of shell.c file
+
+start of Builtins.c file
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include "Builtins.h"
+int s_cd(char **args); //changes directory
+int s_clr(char **args); //clears the screen
+int s_dir(char **args); //displays all directories in the current directory
+int s_environ(char **args); //displays all environment variables
+int s_echo(char **args); //prints anything after the "echo" token
+int s_help(char **args); //prints the User Manual to the screen using the more filter (manually created)
+int s_pause(char **args); //pauses the shell until ONLY ENTER IS PRESSED.
+int s_quit(char **args); //quits the Shell
+int isBuiltin(char *argv[]);// checks that input is a builtin
+
+extern char **environ;//global environmentvariable
+
+char* Builtin[] = { "cd", "clr", "dir", "environ", "echo", "help", "pause", };// holds all builtin names
+
+int (*builtin_func[])(char **) = { &s_cd, &s_clr, &s_dir, &s_environ, &s_echo, &s_help, &s_pause};//holds address of functions
+
+int isBuiltin(char *argv[]){
+  int i;
+  for(i = 0; i < sizeof(Builtin) / sizeof(Builtin[0]); i++)//iterates through argv
+    if(strcmp(argv[0], Builtin[i]) == 0)//checks if builtin
+      return 1;//true
+
+  return 0;//not a builtin value
+
+int s_quit(char **args)//quits shell
+    if(strcmp(args[0], "quit") == 0)
+      printf("Exiting Shell\n");
+      exit(0);//exits program
+
+    return(0);//error handling
+
+//changes directory
+int s_cd(char **args){
+    if(args[1] == NULL){//checks if there is an argument
+      char wd[1024];
+      getcwd(wd, sizeof(wd));//gets current directory
+      printf("The current Directory is: %s\n", wd);//prints directory
+    }else{
+      if(chdir(args[1]) != 0){
+        perror("cd error\n");//can't change directory so error handling
+      }
+    }
+    return(1);//successful function
+  }
+
+  int s_environ(char **args){
+    int i;
+    char *eVariable = *environ;//environment pointer
+    for(i = 1; eVariable; i++){//goes until null iterates through pointer
+      prints environmentvariable
+      eVariable = *(environ + i);//sets next eviron
+    }
+    return 0;
+  }
+
+//clears screen
+  int s_clr(char **args){
+    printf("\e[1;1H\e[2J");//ansi escape code
+    return(1);
+  }
+//pauses shell
+  int s_pause(char **args){
+    char Buffer[500] = " ";//User input
+    printf shell is paused
+    while(strcmp(Buffer, "\n") != 0){//while user hasn't pressed ENTER
+      fgets(Buffer, sizeof(Buffer), stdin);
+    }
+    printf("Shell has resumed\n");
+    return(1);
+  }
+
+//prints to screen or file
+  int s_echo(char **args){
+    int i = 1;
+    while(args[i] != NULL){//checks if there are strings
+      printf("%s ", args[i]);//prints word
+      i++;
+    }
+    printf("%s", "\n");//newline
+    return 1;
+  }
+//prints readme
+  int s_help(char **args){
+   FILE *fp = fopen("readme_doc", "r");//file points to get readme
+   clears screen
+   int j = 0;
+   struct winsize Wsize;//dimensions of window
+   ioctl(0, TIOCGWINSZ, &Wsize);//dimensions of window
+   char MFile[1024];//lines from file
+   while(fgets(MFile,1024, fp) != NULL){//checks for end of file
+     printf("%s", MFile);//print strings
+     j++;
+     if(j == Wsize.ws_row - 1){//if it reaches the end of the number of rows
+       char buffer[10];//checks for input
+       while(fgets(MFile, 1024, fp) != NULL){//not end of file
+         fgets(buffer, sizeof(buffer), stdin);//not end of file
+         if(strcmp(buffer, "\n") == 0){//enter
+           char * t = strtok(MFile, "\n");//gets rid of new line
+           (void)t;
+           printf("%s", MFile);//prints next line
+         }
+         if(strcmp(buffer, "q\n") == 0){//checks if user enters q
+           fclose(fp);//close file
+           return 1;
+         }
+       }
+       fclose(fp);//closes file
+       return 1;
+     }
+   }
+   return 0;
+ }
+
+ #ifndef BUILTINS_DOT_H
+ #define BUILTINS_DOT_H
+ extern char* Builtin[];//placed here so it can be accessed by shell.c without issues
+ extern int (*builtin_func[])(char **);/placed here so it can be accessed by shell.c without issues
+ int s_cd(char **args); //changes directory
+ int s_clr(char **args); //clears the screen
+ int s_dir(char **args); //displays all directories in the current directory
+ int s_environ(char **args); //displays all environment variables
+ int s_echo(char **args); //prints anything after the "echo" token
+ int s_help(char **args); //prints the User Manual to the screen using the more filter (manually created)
+ int s_pause(char **args); //pauses the shell until ONLY ENTER IS PRESSED.
+ int s_quit(char **args); //quits the Shell
+ int isBuiltin(char *argv[]);// checks that input is a builtin
+
+ #endif

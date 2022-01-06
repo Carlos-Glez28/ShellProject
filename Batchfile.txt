@@ -1,0 +1,10 @@
+cd ..
+cd ..
+cd cis3207
+dir
+environ
+echo "hello testing echo" > test1.txt
+cat test1.txt
+wc -l < test1.txt
+cd project-2-developing-a-linux-shell-CarlosGonzalez1280
+sort nums.txt | uniq
